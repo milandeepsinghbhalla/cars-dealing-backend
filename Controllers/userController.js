@@ -1,0 +1,130 @@
+const User = require("../Models/User")
+const bcryptjs = require('bcryptjs');
+var salt = bcryptjs.genSaltSync(10);
+
+const userController = {
+    addAdmin: async (req,res,next)=> {
+        try{
+            let user = await User.find({
+                email: req.body.email
+            })
+            if(user.length != 0){
+                let newError = {
+                    status: 401,
+                    message: 'user already exist'
+                }
+                throw newError
+            }
+            let newUser = new User();
+            newUser.email = req.body.email;
+            newUser.firstName = req.body.firstName;
+            newUser.lastName = req.body.lastName;
+
+            let hash = bcryptjs.hashSync(req.body.password, salt);
+            newUser.password = hash;
+            newUser.role = 'admin';
+            newUser.save()
+            return res.status(201).json({
+                message: 'added succefully..!!'
+            })
+        }
+        catch(err){
+            console.log('error while seting up admin',err);
+            return res.status(401).json({
+                message: 'server error'
+            })
+        }
+    },
+    loginAdmin: (req,res,next)=>{
+        try{
+            let user = User.find({
+                email: 'milansinghdav@gmail.com'
+            })
+            if(user.length == 0){
+                let newError = {
+                    status: 404,
+                    message: 'user not found'
+                }
+            }
+            //check password
+            if(bcryptjs.compareSync(req.body.password, user.password)){
+                return res.status(201).json({
+                    message: 'Sign In successfull...!!!'
+                })
+            }
+            return res.status(401).json({
+                message: 'wrong password...!!!'
+            })
+            // true
+            
+        }
+        catch(err){
+            console.log('error while sign up:- ',err)
+
+        }
+    },
+    signupUser: async (req,res,next)=>{
+        try{
+            let userResult =  User.find({
+                email: req.body.email
+            })
+            if(userResult.length> 0){
+                let newError = {
+                    status: 401,
+                    message: 'User with that email already exist'
+                }
+                return res.status(401).json({
+                    message: newError
+                })
+                throw newError;
+            }
+            let newUser = new User();
+            let { firstName, lastName , email, password } = req.body
+            newUser.firstName = firstName;
+            newUser.lastName = lastName;
+            newUser.email = email;
+            let hash = bcryptjs.hashSync(req.body.password, salt);
+            newUser.password = hash;
+
+            newUser.role = 'customer'
+            let savedUser = await newUser.save();
+            return res.status(201).json({message: 'user Added successfully..!'});
+        }
+        catch(err){
+            console.log('error while signing up..!!',err)
+            return res.status(401).json({message: err.message})
+        }
+    },
+    loginUser: async(req,res,next)=>{
+        try {
+            let userResult = await User.find({
+                email: req.body.email
+            })
+            if(userResult.length==0){
+                return res.status(401).json({
+                    message: 'Wrong email or password.'
+                })
+            }
+            console.log('userResult:- ',userResult);
+            let hashedPassword = userResult[0].password;
+            if(!(bcryptjs.compareSync(req.body.password,hashedPassword))){
+                return res.status(401).json({
+                    message: 'Wrong email or password.'
+                })
+            }
+            let data = userResult[0];
+            delete data.password;
+            return res.status(200).json({
+                message: 'Logged In succeessfully.',
+                userData: data
+            })
+        }
+        catch(err){
+            console.log('error while signing up..!!',err)
+            return res.status(401).json({message: err.message})
+        }
+    }
+    
+}
+
+module.exports = userController;
