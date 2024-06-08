@@ -31,25 +31,28 @@ const storage = multer.diskStorage({
   
   const upload = multer({ storage: storage });
 
-  let arr = [{
-    name: 'carImg-0',
-    maxCount: 1
-  },
-  {
-    name: 'carImg-1',
-    maxCount: 1
-  },
-  {
-    name: 'carImg-2',
-    maxCount: 1
-  },
-  {
-    name: 'carImg-3',
-    maxCount: 1
-  }
-]
+//   let arr = [{
+//     name: 'carImg-0',
+//     maxCount: 1
+//   },
+//   {
+//     name: 'carImg-1',
+//     maxCount: 1
+//   },
+//   {
+//     name: 'carImg-2',
+//     maxCount: 1
+//   },
+//   {
+//     name: 'carImg-3',
+//     maxCount: 1
+//   }
+// ]
 
-  app.post('/add-car', upload.fields(arr), async (req, res) => { // Limit to 10 files
+let arr = []
+
+
+  app.post('/add-car', upload.array('images[]',7), async (req, res) => { // Limit to 10 files
     if (!req.files) {
       return res.status(400).json({message:'No images uploaded.'});
       console.log('image adding error');
