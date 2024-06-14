@@ -22,5 +22,13 @@ const ReviewSchema = new mongoose.Schema({
         required: true,
         ref: "User",
         unique: false 
+    },
+    createdAt: {
+        type: Date,
+        required: true
     }
 })
+
+const Review = mongoose.model("Review", ReviewSchema);
+
+module.exports =  Review;

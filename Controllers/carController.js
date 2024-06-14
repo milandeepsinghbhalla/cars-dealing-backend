@@ -76,6 +76,30 @@ const carController = {
             cars: cars
         })
 
+    },
+    getCar: async (req,res,next)=>{
+        console.log('request reached...!!!');
+        try{
+            console.log('carId',req.body.carId)
+            let car = await Car.findById(req.body.carId);
+            console.log('car:-',car)
+            if(!car){
+                let newError = {
+                    message: 'Car not found...!!!',
+                    status: 404
+                }
+                throw newError
+            }
+            return res.status(200).json({
+                message: 'car got successfully',
+                car:car
+            })
+
+        }
+        catch(err){
+            console.log('error while getting car,:-',err);
+            return res.status(500).json({message: 'error while adding car..!!!'})
+        }
     }
 }
 

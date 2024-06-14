@@ -10,6 +10,7 @@ const carRouter = express.Router();
 
 carRouter.get('/get-new-cars',carController.getNewCars)
 carRouter.get('/get-used-cars',carController.getUsedCars)
+carRouter.post('/get-car',carController.getCar)
 
 
 // edited router

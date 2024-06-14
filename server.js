@@ -49,7 +49,7 @@ const storage = multer.diskStorage({
 //   }
 // ]
 
-let arr = []
+// let arr = []
 
 
   app.post('/add-car', upload.array('images[]',7), async (req, res) => { // Limit to 10 files
@@ -88,9 +88,9 @@ let arr = []
         //     images.push(p);
         // })
         console.log('files:- ',req.files);
-        Object.keys(req.files).map((key)=>{
-
-            let path = (req.files[key][0]).filename;
+        req.files.map((file)=>{
+          console.log('file:- ',file);
+            let path = file.filename ;
             images.push(path);
         })
         newCar.images = images;
@@ -116,7 +116,7 @@ let arr = []
   }
   catch(err){
     console.log('error while adding car', err)
-    return res.status(201).json({
+    return res.status(401).json({
         message: 'error while adding car'
     })
   }
