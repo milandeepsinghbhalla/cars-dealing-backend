@@ -1,11 +1,17 @@
+const jwt = require("jsonwebtoken");
+const secret = process.env.JWT_SECRET;
 
 const authentication = (req,res,next)=>{
 
+    console.log('req reached')
+
     const authHeader = req.headers.authorization;
+    console.log('req',req.headers);
+    console.log('authHeader', authHeader)
 
     if (authHeader) {
         const token = authHeader.split(' ')[1]; // Extract token from 'Bearer <token>' format
-
+        console.log('token', token)
         jwt.verify(token, secret, (err, decoded) => {
             if (err) {
                 return res.status(401).json({ message: 'Unauthorized' });

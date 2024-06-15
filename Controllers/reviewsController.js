@@ -23,8 +23,8 @@ const reviewsController = {
             let newReview = new Review();
             newReview.carId = req.body.carId
             newReview.reviewdBy = req.user._id
-            newReview.rating = req.body.rating
-            newReview.reviewText = req.body.reviewText
+            newReview.rating = req.body.carRating
+            newReview.reviewText = req.body.carReviewText
             newReview.createdAt = Date.now()
             let savedReview = await newReview.save()
             if(!savedReview){
@@ -51,3 +51,5 @@ const reviewsController = {
         }
     }
 }
+
+module.exports = reviewsController;

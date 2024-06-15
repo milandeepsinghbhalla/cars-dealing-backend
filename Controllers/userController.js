@@ -109,8 +109,9 @@ const userController = {
           message: "Wrong email or password.",
         });
       }
-      let data = userResult[0];
+      let data = {...(userResult[0]._doc)};
       delete data.password;
+      console.log('data:- ',data);
       const payload = data;
       const token = jwt.sign(payload, secret, { expiresIn: "2h" });
       return res.status(200).json({
@@ -127,6 +128,20 @@ const userController = {
       return res.status(401).json({ message: err.message });
     }
   },
+  checkAdmin: (req,res,next)=>{
+    console.log('user: ',req.user)
+    if((req.user.role).toLowerCase() == 'admin'){
+      return res.status(200).json({
+        isAdmin: true
+      })
+    }
+    else{
+      return res.status(401).json({
+        message: 'you are not authorized',
+        isAdmin: false
+      })
+    }
+  }
 };
 
 module.exports = userController;

@@ -12,11 +12,13 @@ const carRouter = require('./Routes/carRoutes');
 const path = require('path');
 const Contact = require('./Models/Contact');
 const sendEmail = require('./mailer');
+const reviewRouter = require('./Routes/reviewRoutes');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(userRouter);
 app.use(carRouter);
+app.use(reviewRouter);
 const staticPath = path.join(__dirname, 'uploads');
 app.use(express.static(staticPath));
 
