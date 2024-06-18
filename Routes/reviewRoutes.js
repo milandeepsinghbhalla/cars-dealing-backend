@@ -6,6 +6,8 @@ const reviewsController = require('../Controllers/reviewsController.js');
 const reviewRouter = express.Router();
 
 reviewRouter.post("/post-review",authentication, reviewsController.postReview);
+reviewRouter.get("/get-reviews", reviewsController.getReviews);
+reviewRouter.post('/get-reviewBarData',reviewsController.getReviewBarData);
 
 
 module.exports = reviewRouter;

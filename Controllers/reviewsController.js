@@ -49,7 +49,67 @@ const reviewsController = {
                 err: err
             })
         }
+    },
+    getReviews: async (req,res,next)=>{
+        let reviews = await Review.find({})
+        .populate({ path: 'reviewdBy', select: 'firstName lastName' })
+        if(reviews){
+            console.log('reviews',reviews);
+            return res.status(200).json({
+                message: 'reviews fetched successfully.',
+                reviews: reviews
+            })
+
+        }
+        return res.status(500).json({
+            message: 'some server error.'
+        })
+    },
+    getReviewBarData: async(req,res,next)=>{
+        try{
+
+            let oneStarReviews = await Review.find({
+                carId: req.body.carId,
+                rating: 1
+            }).countDocuments()
+            let twoStarReviews = await Review.find({
+                carId: req.body.carId,
+                rating: 2
+            }).countDocuments()
+            let threeStarReviews = await Review.find({
+                carId: req.body.carId,
+                rating: 3
+            }).countDocuments()
+            let fourStarReviews = await Review.find({
+                carId: req.body.carId,
+                rating: 4
+            }).countDocuments()
+            let fiveStarReviews = await Review.find({
+                carId: req.body.carId,
+                rating: 5
+            }).countDocuments()
+            let allReviews = {
+                1: oneStarReviews,
+                2: twoStarReviews,
+                3: threeStarReviews,
+                4: fourStarReviews,
+                5: fiveStarReviews
+            }
+            return res.status(200).json({
+                message: 'reviews retreived successfully.',
+                allReviews
+            })
+        }
+        catch(err){
+            return res.status(500).json({
+                message: 'some server error occured.',
+                err: err.message
+               
+            })
+        }
     }
+        
+    
 }
 
 module.exports = reviewsController;
