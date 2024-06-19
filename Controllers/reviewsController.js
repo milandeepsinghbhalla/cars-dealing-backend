@@ -51,13 +51,24 @@ const reviewsController = {
         }
     },
     getReviews: async (req,res,next)=>{
-        let reviews = await Review.find({})
+        let page = req.body.page
+        console.log('page:- ',page)
+        let itemsPerPage = 5
+        let count  = await Review.find({
+            carId: req.body.carId
+        }).countDocuments()
+        let reviews = await Review.find({
+            carId: req.body.carId
+        })
+        .skip(itemsPerPage * (page - 1))
+        .limit(itemsPerPage)
         .populate({ path: 'reviewdBy', select: 'firstName lastName' })
         if(reviews){
             console.log('reviews',reviews);
             return res.status(200).json({
                 message: 'reviews fetched successfully.',
-                reviews: reviews
+                reviews: reviews,
+                count: count
             })
 
         }

@@ -8,7 +8,7 @@ const carRouter = express.Router();
 // userRouter.post('/login',userController.login)
 //userRouter.post("/login", userController.login);
 
-carRouter.get('/get-new-cars',carController.getNewCars)
+carRouter.post('/get-new-cars',carController.getNewCars)
 carRouter.get('/get-used-cars',carController.getUsedCars)
 carRouter.post('/get-car',carController.getCar)
 

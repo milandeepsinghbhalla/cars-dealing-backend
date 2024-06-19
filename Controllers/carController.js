@@ -57,14 +57,17 @@ const carController = {
 
         let page = req.body.page;
         let itemsPerPage = 6;
-
+        let count = await Car.find({
+             oldOrNew: 'New'
+        }).countDocuments();
         let cars = await Car.find({
             oldOrNew: 'New'
         }).skip(itemsPerPage * (page - 1)).limit(itemsPerPage)
         console.log('All new cars:- ',cars);
         res.status(200).json({
             message: 'All new Cars',
-            cars: cars
+            cars: cars,
+            count:count
         })
 
     },
