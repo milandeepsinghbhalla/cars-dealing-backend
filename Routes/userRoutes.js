@@ -8,6 +8,7 @@ userRouter.post("/add-admin", userController.addAdmin);
 userRouter.post("/signup-customer", userController.signupUser);
 userRouter.post("/login-customer", userController.loginUser);
 userRouter.post("/check-admin",authentication, userController.checkAdmin);
+userRouter.post("/sign-up-google",userController.signUpGoogle)
 
 
 // userRouter.post('/login',userController.login)

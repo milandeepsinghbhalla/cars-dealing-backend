@@ -13,9 +13,57 @@ const path = require('path');
 const Contact = require('./Models/Contact');
 const sendEmail = require('./mailer');
 const reviewRouter = require('./Routes/reviewRoutes');
+// const passport = require('passport');
+// const OAuth2Strategy = require('passport-google-oauth2').Strategy
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(passport.initialize());
+
+
+// passport.use(
+//   new OAuth2Strategy({
+//     clientID: process.env.CLIENT_ID,
+//     clientSecret: process.env.CLIENT_SECRET,
+//     callbackURL: "/auth/google/callback",
+//     scope:["profile","email"]
+//   },async(accessToken,refreshToken,profile,done)=>{
+//     console.log('profile:- ',profile);
+//     try {
+//       let user = await User.find({
+//         email: profile.emails[0].value
+//       })
+//       if(user){
+//         // create token.
+//       }
+//       else{
+//         // create new user and save to database.
+//         user = new User();
+//         user.firstName = profile.displayName;
+//         user.email = profile.email[0].value;
+//         user.role = 'customer';
+//         user = await user.save();
+//       }
+//       return done(null,user);
+//     }
+//     catch(err){
+//       return done(err,null)
+//     }
+//   }
+// )
+// )
+// passport.serializeUser((user,done)=>{
+//   done(null,user);
+// })
+// passport.deserializeUser((user,done)=>{
+//   done(null,user);
+// })
+
+// app.get("/auth/google",passport.authenticate("google",{scope:["profile","email"]}));
+// app.get("/auth/google/callback",passport.authenticate("google",{
+//   successRedirect:"http://"
+// }))
 app.use(userRouter);
 app.use(carRouter);
 app.use(reviewRouter);

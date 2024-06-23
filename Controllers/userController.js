@@ -32,7 +32,7 @@ const userController = {
     } catch (err) {
       console.log("error while seting up admin", err);
       return res.status(401).json({
-        message: "server error",
+        message: err.message,
       });
     }
   },
@@ -63,7 +63,7 @@ const userController = {
   },
   signupUser: async (req, res, next) => {
     try {
-      let userResult = User.find({
+      let userResult = await User.find({
         email: req.body.email,
       });
       if (userResult.length > 0) {
@@ -71,9 +71,7 @@ const userController = {
           status: 401,
           message: "User with that email already exist",
         };
-        return res.status(401).json({
-          message: newError,
-        });
+       
         throw newError;
       }
       let newUser = new User();
@@ -127,6 +125,55 @@ const userController = {
       console.log("error while signing up..!!", err);
       return res.status(401).json({ message: err.message });
     }
+  },
+  signUpGoogle: async (req,res,next)=>{
+    const {firstName, lastName, email, role } = req.body;
+    
+    let user = await User.find({
+      email: email
+    });
+    let token = ""
+    if(user.length> 0){
+      const payload = {
+        firstName,
+        lastName,
+        email,
+        role
+      }
+      token = jwt.sign(payload, secret, { expiresIn: "2h" });
+    }
+    else{
+      user = new User();
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.role = role
+      user = await user.save();
+      const payload = {
+        firstName,
+        lastName,
+        email,
+        role
+      }
+      token = jwt.sign(payload, secret, { expiresIn: "2h" });
+      
+    }
+
+    return res.status(200).json({
+      message: "Logged In succeessfully.",
+      userData: {
+        userToken: token,
+
+        firstName: firstName,
+        role: role,
+      },
+    });
+
+
+    // let savedUser = await user.save()
+
+
+
   },
   checkAdmin: (req,res,next)=>{
     console.log('user: ',req.user)
