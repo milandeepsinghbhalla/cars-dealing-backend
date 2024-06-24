@@ -11,8 +11,11 @@ const Car = require('./Models/Car');
 const carRouter = require('./Routes/carRoutes');
 const path = require('path');
 const Contact = require('./Models/Contact');
-const sendEmail = require('./mailer');
+// const sendEmail = require('./mailer');
 const reviewRouter = require('./Routes/reviewRoutes');
+
+const carController = require('./Controllers/carController');
+const subscriberRouter = require('./Routes/subscriber');
 // const passport = require('passport');
 // const OAuth2Strategy = require('passport-google-oauth2').Strategy
 
@@ -67,6 +70,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(userRouter);
 app.use(carRouter);
 app.use(reviewRouter);
+app.use(subscriberRouter);
+
 const staticPath = path.join(__dirname, 'uploads');
 app.use(express.static(staticPath));
 
@@ -102,76 +107,7 @@ const storage = multer.diskStorage({
 // let arr = []
 
 
-  app.post('/add-car', upload.array('images[]',7), async (req, res) => { // Limit to 10 files
-    if (!req.files) {
-      return res.status(400).json({message:'No images uploaded.'});
-      console.log('image adding error');
-    }
-    try {
-        let user = await User.findOne({email:req.body.email})
-        console.log('user:- ',user)
-        if(user.role!='admin'){
-            return res.status(401).json({message: 'unauthorized'})
-        }
-        console.log('user:-',user);
-        let adminid = user._id;
-
-        let newCar = new Car();
-        let { name, oldOrNew, carType, year,price,brand,engine,suspension,transmission,fuelType,mileage,seatingCapacity,color} = req.body;
-        newCar.adminId = adminid;
-        newCar.name = name;
-        newCar.oldOrNew = oldOrNew;
-        newCar.carType = carType;
-        newCar.year  = year;
-        newCar.price = price;
-        newCar.brand = brand;
-        newCar.engine = engine;
-        newCar.mileage = mileage;
-        newCar.suspension = suspension;
-        newCar.transmission = transmission;
-        newCar.fuelType = fuelType;
-        newCar.seatingCapacity = seatingCapacity;
-        newCar.color = color;
-        let images = [] 
-        // arr.map((obj)=>{
-        //     let p = (req.files[obj.name][0]).path;
-        //     images.push(p);
-        // })
-        console.log('files:- ',req.files);
-        req.files.map((file)=>{
-          console.log('file:- ',file);
-            let path = file.filename ;
-            images.push(path);
-        })
-        newCar.images = images;
-        let savedCar = await newCar.save();
-        if(!savedCar._id){
-            let newError = {
-                status : 401,
-                message: 'error while adding car in server'
-            }
-            throw newError;
-        }
-        return res.status(201).json({message: 'added succefully...!!'})
-        // req.body.carId = savedCar._id;
-    // const uploadedImages = req.files.map(file => ({
-    //   path: file.path, // Path to the uploaded file
-      
-    //   filename: file.originalname, // Original filename 
-    // }));
-  
-    // Save image paths to your database or perform other operations
-  
-    // res.status(200).json({ message: 'Images uploaded successfully!', images: uploadedImages });
-  }
-  catch(err){
-    console.log('error while adding car', err)
-    return res.status(401).json({
-        message: 'error while adding car'
-    })
-  }
-}
-);
+  app.post('/add-car', upload.array('images[]',7), carController.addCar);
 
 app.post('/contact-us',async (req,res,next)=>{
   let newContact = new Contact()
@@ -184,16 +120,18 @@ app.post('/contact-us',async (req,res,next)=>{
   })
 })
 
-app.post('/send-email', async (req, res) => {
-  const { to } = req.body; // Get email details from request body
-  try {
-    await sendEmail(to, 'Welcome Subscribed to Japan Direct Autos Newsletter...!!!', 'You will be notified whenever a new car is added.');
-    res.json({ message: 'Email sent successfully!' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error sending email' });
-  }
-});
+// app.post('/send-email', async (req, res) => {
+//   const { to } = req.body; // Get email details from request body
+//   try {
+//     await sendEmail(to, 'Welcome Subscribed to Japan Direct Autos Newsletter...!!!', 'You will be notified whenever a new car is added.');
+//     res.json({ message: 'Email sent successfully!' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Error sending email' });
+//   }
+// });
+// code to send emails.
+// const transporter = nodemailer.createTransport(transport);
 
 mongoose.connect(process.env.DATABASE_URL)
   .then(() => {
