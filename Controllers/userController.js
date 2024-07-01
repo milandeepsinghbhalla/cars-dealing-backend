@@ -132,6 +132,11 @@ const userController = {
     let user = await User.find({
       email: email
     });
+    if((user.role).toLowerCase() == 'admin'){
+      return res.status(401).json({
+        message: "scince you are a admin so use password to login."
+      })
+    }
     let token = ""
     if(user.length> 0){
       const payload = {

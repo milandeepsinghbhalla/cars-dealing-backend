@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 
 const app = express();
+const cron = require('node-cron');
+
 var cors = require('cors');
 const userRouter = require('./Routes/userRoutes');
 const User = require('./Models/User');
@@ -15,7 +17,10 @@ const Contact = require('./Models/Contact');
 const reviewRouter = require('./Routes/reviewRoutes');
 
 const carController = require('./Controllers/carController');
-const subscriberRouter = require('./Routes/subscriber');
+const subscriberRouter = require('./Routes/subscriberRoutes');
+const subscriberController = require('./Controllers/subscriberController');
+const authentication = require('./Middlewares/authentication');
+const EnquiryRouter = require('./Routes/EnquiryRoutes');
 // const passport = require('passport');
 // const OAuth2Strategy = require('passport-google-oauth2').Strategy
 
@@ -71,6 +76,7 @@ app.use(userRouter);
 app.use(carRouter);
 app.use(reviewRouter);
 app.use(subscriberRouter);
+app.use(EnquiryRouter);
 
 const staticPath = path.join(__dirname, 'uploads');
 app.use(express.static(staticPath));
@@ -107,7 +113,7 @@ const storage = multer.diskStorage({
 // let arr = []
 
 
-  app.post('/add-car', upload.array('images[]',7), carController.addCar);
+  app.post('/add-car', upload.array('images[]',7),authentication, carController.addCar);
 
 app.post('/contact-us',async (req,res,next)=>{
   let newContact = new Contact()
@@ -132,6 +138,11 @@ app.post('/contact-us',async (req,res,next)=>{
 // });
 // code to send emails.
 // const transporter = nodemailer.createTransport(transport);
+const cronJob = cron.schedule('0 9 * * MON', () => {
+  subscriberController.sendProductAddedEmail().then();
+})
+
+cronJob.start();
 
 mongoose.connect(process.env.DATABASE_URL)
   .then(() => {

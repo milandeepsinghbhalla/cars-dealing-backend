@@ -14,6 +14,7 @@ const authentication = (req,res,next)=>{
         console.log('token', token)
         jwt.verify(token, secret, (err, decoded) => {
             if (err) {
+                console.log('token error:-',err);
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
@@ -21,6 +22,8 @@ const authentication = (req,res,next)=>{
             next();
         });
     } else {
+        console.log('token error 2:-',err);
+
         res.status(401).json({ message: 'Unauthorized' });
     }
 }

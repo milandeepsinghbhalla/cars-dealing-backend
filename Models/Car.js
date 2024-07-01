@@ -10,8 +10,8 @@ const CarSchema = new mongoose.Schema({
   name: String,
   oldOrNew: String,
   carType: String,
-  year: Number,
-  price: Number,
+  year: String,
+  price: String,
   brand: String,
   images: {
     type: [String],

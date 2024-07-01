@@ -9,8 +9,11 @@ const carRouter = express.Router();
 //userRouter.post("/login", userController.login);
 
 carRouter.post('/get-new-cars',carController.getNewCars)
-carRouter.get('/get-used-cars',carController.getUsedCars)
+carRouter.post('/get-used-cars',carController.getUsedCars)
 carRouter.post('/get-car',carController.getCar)
+carRouter.get('/get-seven-new-cars',carController.getSevenNewCars)
+carRouter.get('/get-seven-used-cars',carController.getSevenUsedCars)
+
 
 
 // edited router

@@ -74,15 +74,34 @@ const carController = {
     });
   },
   getUsedCars: async (req, res, next) => {
+    let page = req.body.page;
+    console.log('page:-',page)
+    let itemsPerPage = 6;
+    let count = await Car.find({
+      oldOrNew: "Used",
+    }).countDocuments();
     let cars = await Car.find({
       oldOrNew: "Used",
-    });
+    })
+      .skip(itemsPerPage * (page - 1))
+      .limit(itemsPerPage);
     console.log("All Used cars:- ", cars);
     res.status(200).json({
       message: "All Used Cars",
       cars: cars,
+      count: count,
     });
   },
+  // getUsedCars: async (req, res, next) => {
+  //   let cars = await Car.find({
+  //     oldOrNew: "Used",
+  //   });
+  //   console.log("All Used cars:- ", cars);
+  //   res.status(200).json({
+  //     message: "All Used Cars",
+  //     cars: cars,
+  //   });
+  // },
   getCar: async (req, res, next) => {
     console.log("request reached...!!!");
     try {
@@ -111,7 +130,8 @@ const carController = {
       console.log("image adding error");
     }
     try {
-      let user = await User.findOne({ email: req.body.email });
+      // let user = await User.findOne({ email: req.body.email });
+      let user = req.user;
       console.log("user:- ", user);
       if (user.role != "admin") {
         return res.status(401).json({ message: "unauthorized" });
@@ -169,7 +189,7 @@ const carController = {
         };
         throw newError;
       }
-      //   return res.status(201).json({message: 'added succefully...!!'})
+        return res.status(201).json({message: 'added succefully...!!'})
 
       // code to send email to subscribers.
     } catch (err) {
@@ -179,6 +199,35 @@ const carController = {
       });
     }
   },
+  getSevenNewCars: async (req,res,next)=>{
+    try {
+      
+      let sevenNewCars = await Car.find({
+        oldOrNew: "New",
+      }).limit(7)
+      return res.status(200).json({
+        cars: sevenNewCars
+      })
+    } catch (error) {
+      console.log('err while getting 7 cars',error);
+    }
+    
+  },
+  getSevenUsedCars: async (req,res,next)=>{
+    try {
+      
+      let sevenUsedCars = await Car.find({
+        oldOrNew: "Used",
+      }).limit(7)
+      return res.status(200).json({
+        cars: sevenUsedCars
+      })
+    } catch (error) {
+      console.log('err while getting 7 cars',error);
+    }
+    
+  }
+
 };
 
 module.exports = carController;
