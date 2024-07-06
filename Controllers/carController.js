@@ -226,6 +226,32 @@ const carController = {
       console.log('err while getting 7 cars',error);
     }
     
+  },
+  getFiveCars: async (req,res,next)=>{
+    try {
+      let page = req.body.page
+      let total = await Car.find().countDocuments()
+      let fiveCars = await Car.find().populate('adminId','email').skip(5 * (page - 1)).limit(5)
+      let finalFiveCars = [];
+      fiveCars.forEach((car)=>{
+        let objCar = {}
+        objCar.name = car.name;
+        objCar.adminEmail = car.adminId;
+        objCar.oldOrNew = car.oldOrNew
+        objCar.carId = car._id;
+        finalFiveCars.push(objCar)
+      })
+      return res.status(200).json({
+        finalFiveCars: finalFiveCars,
+        total
+      })
+
+    } catch (error) {
+      console.log('error while getting 5 cars',error)
+      return res.status(500).json({
+        message: 'some server error.'
+      })
+    }
   }
 
 };

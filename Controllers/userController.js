@@ -132,19 +132,18 @@ const userController = {
     let user = await User.find({
       email: email
     });
-    if((user.role).toLowerCase() == 'admin'){
-      return res.status(401).json({
-        message: "scince you are a admin so use password to login."
-      })
+    console.log('user data:-',user)
+    if(user.length>0){
+
+      if((user[0].role).toLowerCase() == 'admin'){
+        return res.status(401).json({
+          message: "scince you are a admin so use password to login."
+        })
+      }
     }
     let token = ""
     if(user.length> 0){
-      const payload = {
-        firstName,
-        lastName,
-        email,
-        role
-      }
+      const payload = user[0]._doc;
       token = jwt.sign(payload, secret, { expiresIn: "2h" });
     }
     else{
@@ -154,12 +153,7 @@ const userController = {
       user.email = email;
       user.role = role
       user = await user.save();
-      const payload = {
-        firstName,
-        lastName,
-        email,
-        role
-      }
+      const payload = user
       token = jwt.sign(payload, secret, { expiresIn: "2h" });
       
     }

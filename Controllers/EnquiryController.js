@@ -7,6 +7,7 @@ const EnquiryController = {
 
     try {
         let user = req.user;
+        console.log('user',user)
         let enquiry = await Enquiry.find({
           enquiredBy: user._id,
           carId: req.body.carId,
