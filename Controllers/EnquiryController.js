@@ -90,6 +90,45 @@ const EnquiryController = {
     }
    
   },
+  getFiveEnquiries: async (req,res,next) =>{
+
+    let page = req.body.page
+    let totalEnquiries = await Enquiry.find().countDocuments();
+    let enquiries = await Enquiry.find().populate('enquiredBy','email').skip(5 * (page - 1)).limit(5);
+
+    return res.status(200).json({
+      total: totalEnquiries,
+      enquiries: enquiries
+    })
+  },
+  deleteEnquiry: async (req,res,next) =>{
+
+    await Enquiry.findByIdAndDelete(req.body.enquiryId)
+    return res.status(200).json({
+      message: 'Enquiry deleted succeessfully.'
+    })
+  },
+  completeEnquiry: async (req,res,next)=>{
+    try {
+      let enquiry = await Enquiry.findById(req.body.enquiryId)
+      if(!enquiry){
+         let newError = {
+          message: 'Enquiry not found.'
+         }
+         throw newError
+      }
+      enquiry.completed = true
+      await enquiry.save();
+      return res.status(200).json({
+        message: 'Enquiry Completed'
+      })
+    } catch (error) {
+      console.log('error while completing enquiry.',error);
+      return res.status(500).json({
+        message: error.message
+      })
+    }
+  }
 };
 
 module.exports = EnquiryController

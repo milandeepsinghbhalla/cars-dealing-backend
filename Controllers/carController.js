@@ -4,6 +4,7 @@ const User = require("../Models/User");
 
 const nodemailer = require("nodemailer");
 const nodemailerTransport = require("nodemailer-sendgrid-transport");
+const fs = require("fs");
 
 const carController = {
   // addCar: (req,res,next)=>{
@@ -75,7 +76,7 @@ const carController = {
   },
   getUsedCars: async (req, res, next) => {
     let page = req.body.page;
-    console.log('page:-',page)
+    console.log("page:-", page);
     let itemsPerPage = 6;
     let count = await Car.find({
       oldOrNew: "Used",
@@ -189,7 +190,7 @@ const carController = {
         };
         throw newError;
       }
-        return res.status(201).json({message: 'added succefully...!!'})
+      return res.status(201).json({ message: "added succefully...!!" });
 
       // code to send email to subscribers.
     } catch (err) {
@@ -199,61 +200,89 @@ const carController = {
       });
     }
   },
-  getSevenNewCars: async (req,res,next)=>{
+  getSevenNewCars: async (req, res, next) => {
     try {
-      
       let sevenNewCars = await Car.find({
         oldOrNew: "New",
-      }).limit(7)
+      }).limit(7);
       return res.status(200).json({
-        cars: sevenNewCars
-      })
+        cars: sevenNewCars,
+      });
     } catch (error) {
-      console.log('err while getting 7 cars',error);
+      console.log("err while getting 7 cars", error);
     }
-    
   },
-  getSevenUsedCars: async (req,res,next)=>{
+  getSevenUsedCars: async (req, res, next) => {
     try {
-      
       let sevenUsedCars = await Car.find({
         oldOrNew: "Used",
-      }).limit(7)
+      }).limit(7);
       return res.status(200).json({
-        cars: sevenUsedCars
-      })
+        cars: sevenUsedCars,
+      });
     } catch (error) {
-      console.log('err while getting 7 cars',error);
+      console.log("err while getting 7 cars", error);
     }
-    
   },
-  getFiveCars: async (req,res,next)=>{
+  getFiveCars: async (req, res, next) => {
     try {
-      let page = req.body.page
-      let total = await Car.find().countDocuments()
-      let fiveCars = await Car.find().populate('adminId','email').skip(5 * (page - 1)).limit(5)
+      let page = req.body.page;
+      let total = await Car.find().countDocuments();
+      let fiveCars = await Car.find()
+        .populate("adminId", "email")
+        .skip(5 * (page - 1))
+        .limit(5);
       let finalFiveCars = [];
-      fiveCars.forEach((car)=>{
-        let objCar = {}
+      fiveCars.forEach((car) => {
+        let objCar = {};
         objCar.name = car.name;
         objCar.adminEmail = car.adminId;
-        objCar.oldOrNew = car.oldOrNew
+        objCar.oldOrNew = car.oldOrNew;
         objCar.carId = car._id;
-        finalFiveCars.push(objCar)
-      })
+        finalFiveCars.push(objCar);
+      });
       return res.status(200).json({
         finalFiveCars: finalFiveCars,
-        total
-      })
-
+        total,
+      });
     } catch (error) {
-      console.log('error while getting 5 cars',error)
+      console.log("error while getting 5 cars", error);
       return res.status(500).json({
-        message: 'some server error.'
-      })
+        message: "some server error.",
+      });
     }
-  }
+  },
+  deleteCar: async (req, res, next) => {
+    try {
+      const car = await Car.findById(req.body.carId);
+      if (!car) {
+        let newError = {
+          message: "car not found",
+        };
+        throw newError;
+      }
+      car.images.forEach((imgPath)=>{
 
+        fs.unlink(imgPath, (err) => {
+          if (err) {
+            console.error("Failed to delete image file:", err);
+          } else {
+            console.log("Image file deleted successfully!");
+          }
+        });
+      })
+      await Car.findByIdAndDelete(req.body.carId);
+
+      return res.status(201).json({
+        message: 'Car deleted successfully.'
+      })
+
+    } catch (err) {
+      return res.status(500).json({
+        message: err.message,
+      });
+    }
+  },
 };
 
 module.exports = carController;

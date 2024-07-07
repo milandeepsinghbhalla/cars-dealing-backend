@@ -14,6 +14,8 @@ carRouter.post('/get-car',carController.getCar)
 carRouter.get('/get-seven-new-cars',carController.getSevenNewCars)
 carRouter.get('/get-seven-used-cars',carController.getSevenUsedCars)
 carRouter.post('/get-five-cars',carController.getFiveCars)
+carRouter.post('/delete-car',carController.deleteCar)
+
 
 
 
