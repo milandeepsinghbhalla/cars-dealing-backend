@@ -21,6 +21,7 @@ const EnquirySchema = new mongoose.Schema({
     completed: Boolean
 })
 
+EnquirySchema.index({'$**':'text'});
 const Enquiry = mongoose.model("Enquiry", EnquirySchema);
 
 module.exports =  Enquiry

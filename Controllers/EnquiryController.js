@@ -128,6 +128,47 @@ const EnquiryController = {
         message: error.message
       })
     }
+  },
+  filterEnquiry: async (req,res,next)=>{
+    try {
+      const total = await Enquiry.find({ completed: req.body.completed}).countDocuments();
+      const filteredEnquiries = await Enquiry.find(
+        {
+          completed: req.body.completed
+        }
+      ).populate("enquiredBy","email").skip(5 *(req.body.page - 1)).limit(5)
+      return res.status(200).json({
+        total,
+        filteredEnquiries
+      })
+    } catch (error) {
+      console.log('err while filtering enquiry',error)
+      return res.status(500).json({
+        message: error.message
+      })
+    }
+  },
+  searchEnquiries: async(req,res,next) =>{
+    try {
+      const total = await Enquiry.find({
+        $text: {$search: req.body.searchText}
+      }).countDocuments()
+      console.log('total search: ',total)
+      const searchResult = await Enquiry.find({
+        $text: {$search: req.body.searchText}
+      }).populate("enquiredBy","email").skip(5 *(req.body.page - 1)).limit(5)
+
+      return res.status(200).json({
+        total,
+        searchResult
+      })
+
+    } catch (error) {
+      console.log('err while filtering enquiry',error)
+      return res.status(500).json({
+        message: error.message
+      })
+    }
   }
 };
 
