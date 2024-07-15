@@ -31,7 +31,7 @@ const CarSchema = new mongoose.Schema({
     required: false,
   },
 });
-
+CarSchema.index({'$**': 'text'});
 const Car = mongoose.model("Car", CarSchema);
 
 module.exports =  Car

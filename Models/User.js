@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CarSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     email: {
@@ -16,7 +16,8 @@ const CarSchema = new mongoose.Schema({
         required: true
     }
 })
+UserSchema.index({'$**':'text'});
 
-const User = mongoose.model("User", CarSchema);
+const User = mongoose.model("User", UserSchema);
 
 module.exports =  User;

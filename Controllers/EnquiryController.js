@@ -22,6 +22,7 @@ const EnquiryController = {
         // fill in db
         enquiry = new Enquiry();
         enquiry.enquiredBy = user._id;
+        enquiry.enquiredByEmail = user.email;
         enquiry.enquirySubject = req.body.enquirySubject;
         enquiry.enquiryText = req.body.enquiryText;
         enquiry.carId = req.body.carId;
@@ -165,6 +166,26 @@ const EnquiryController = {
 
     } catch (error) {
       console.log('err while filtering enquiry',error)
+      return res.status(500).json({
+        message: error.message
+      })
+    }
+  },
+  searchEnquiriesByEmail: async(req,res,next)=>{
+    try {
+      const total = await Enquiry.find({
+        enquiredByEmail: (req.body.email).trim()
+      }).countDocuments();
+      let enquiries = await Enquiry.find({
+        enquiredByEmail: (req.body.email).trim()
+
+      }).populate("enquiredBy","email").skip(5 * (req.body.page - 1)).limit(5)
+      return res.status(200).json({
+        total,
+        searchResult: enquiries
+      })
+    } catch (error) {
+      console.log('err:-',error)
       return res.status(500).json({
         message: error.message
       })

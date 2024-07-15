@@ -283,6 +283,28 @@ const carController = {
       });
     }
   },
+  searchCars: async (req,res,next)=> {
+    try {
+      const total = await Car.find({
+        $text: {$search: req.body.searchText}
+      }).countDocuments()
+      console.log('total search: ',total)
+      const searchResult = await Car.find({
+        $text: {$search: req.body.searchText}
+      }) .populate("adminId", "email").skip(5 *(req.body.page - 1)).limit(5)
+
+      return res.status(200).json({
+        total,
+        searchResult
+      })
+
+    } catch (error) {
+      console.log('err while searching Cars',error)
+      return res.status(500).json({
+        message: error.message
+      })
+    }
+  }
 };
 
 module.exports = carController;

@@ -8,6 +8,7 @@ const EnquirySchema = new mongoose.Schema({
         ref: "User",
         unique: false 
     },
+    enquiredByEmail: String,
     enquirySubject: String,
     enquiryText: String,
     carId: {
