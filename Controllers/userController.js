@@ -111,7 +111,7 @@ const userController = {
       delete data.password;
       console.log("data:- ", data);
       const payload = data;
-      const token = jwt.sign(payload, secret, { expiresIn: "2h" });
+      const token = jwt.sign(payload, secret, { expiresIn: "10h" });
       return res.status(200).json({
         message: "Logged In succeessfully.",
         userData: {

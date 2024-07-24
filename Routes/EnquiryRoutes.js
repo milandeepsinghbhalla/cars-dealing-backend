@@ -11,6 +11,7 @@ EnquiryRouter.post('/delete-enquiry',EnquiryController.deleteEnquiry)
 EnquiryRouter.post('/filter-enquiries',EnquiryController.filterEnquiry)
 EnquiryRouter.post('/search-enquiries',EnquiryController.searchEnquiries)
 EnquiryRouter.post("/search-enquiries-by-email",EnquiryController.searchEnquiriesByEmail);
+EnquiryRouter.post("/get-your-enquiries",authentication,EnquiryController.getYourEnquiries);
 
 
 

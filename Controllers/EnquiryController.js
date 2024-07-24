@@ -46,22 +46,22 @@ const EnquiryController = {
         const htmlContent = ` 
                     <h1>You Have a new enquiry</h1>
                     <h3>User Data</h3>
-                    <table style="margin:3em">
+                    <table style="margin:3em; border: 1px solid black;">
                         
       <thead>
         <tr>
-          <th>Properties</th>
-          <th>Values</th>
+          <th style="border: 1px solid black;">Properties</th>
+          <th style="border: 1px solid black;">Values</th>
           </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Name </td>
-          <td>${user.firstName} ${user.lastName}</td>
+          <td style="border: 1px solid black;">Name </td>
+          <td style="border: 1px solid black;">${user.firstName} ${user.lastName}</td>
           </tr>
         <tr>
-          <td>Email</td>
-          <td>${user.email}</td>
+          <td style="border: 1px solid black;">Email</td>
+          <td style="border: 1px solid black;">${user.email}</td>
           </tr>
       </tbody>
       </table>
@@ -190,6 +190,27 @@ const EnquiryController = {
         message: error.message
       })
     }
+  },
+  getYourEnquiries: async (req,res,next)=>{
+    try {
+      let total = await Enquiry.find({
+        enquiredBy: req.user._id 
+      }).countDocuments();
+      let yourEnquiries = await Enquiry.find({
+        enquiredBy: req.user._id
+      }).skip(5 * (req.body.page - 1)).limit(5)
+  
+      return res.status(200).json({
+        yourEnquiries,
+        total
+      })
+    } catch (error) {
+      console.log('err:-',error)
+      return res.status(500).json({
+        message: error.message
+      })
+    }
+   
   }
 };
 
